@@ -8,5 +8,6 @@
     "channel_id_2"
   ],
   "message": "Your message goes here",
+  "Notify_if_Message_Not_Sent": false,
   "timer": 10
 }
