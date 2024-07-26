@@ -8,6 +8,8 @@ this project is made to run in the background for ease of use.
 
 **DONT PUT AN ACCESSIVE AMOUNT OF CHANNELS OR YOU WILL GET RATE LIMITED**
 
+**SELF BOTTING IS AGAINST DISCORD TOS IM NOT RESPONSIBLE IF ANY BANS OCCUR**
+
 **Donate Crypto**
 ```
 BTC: bc1qvycuvdsrx5zatr7qvzlsnkej0d65fpsmrqv3m7
