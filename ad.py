@@ -1,5 +1,5 @@
 from http.client import HTTPSConnection
-from json import dumps
+from json import dumps, JSONDecodeError
 from time import sleep
 import json, os, pystray, threading, traceback
 from pystray import MenuItem as item
@@ -9,7 +9,7 @@ from PIL import Image
 
 ##-- Config Load --##
 try:
-    with open('config.json') as config_file:
+    with open('config.json', 'r', encoding='utf-8') as config_file:
         config_data = json.load(config_file)
 except JSONDecodeError:
     messagebox.showinfo("Auto Adbot", "There was an error loading the config.json file. Please ensure it is valid JSON.")
@@ -42,12 +42,12 @@ def send_message(conn, channel_id, message_data, token):
         json_data = dumps(message_data)
         conn.request("POST", f"/api/v6/channels/{channel_id}/messages", json_data.encode(), header_data)
         conn.getresponse()
-    except:
+    except Exception as e:
         if notsent:
-            messagebox.showinfo("Auto Adbot", "Bot might have broke there was a error sending message.")
+            messagebox.showinfo("Auto Adbot", f"Bot might have broken; there was an error sending the message:\n\n{str(e)}")
             os._exit(5)
         else:
-            pass
+            print(f"Error sending message: {e}")
 
 def on_exit_clicked(icon, item):
     icon.stop()
@@ -73,22 +73,21 @@ def tray_thread():
 def tkinter_thread():
     root = tk.Tk()
     root.withdraw()
-    messagebox.showinfo("Auto Adbot", "The program is running in the background.\nto close it right click it in the taskbar (its the blue icon)")
+    messagebox.showinfo("Auto Adbot", "The program is running in the background.\nTo close it, right-click the icon in the taskbar (it's the blue icon).")
     root.mainloop()
 
-if __name__ == '__main__':
-    img = Image.new('RGBA', (16, 16), (0, 0, 255, 255))
-    tray_icon = pystray.Icon("Auto Ad Bot", menu=pystray.Menu(item('Exit', on_exit_clicked)), icon=img)
-    tray_thread = threading.Thread(target=tray_thread)
-    tray_thread.start()
-    tkinter_thread = threading.Thread(target=tkinter_thread)
-    tkinter_thread.start()
-    while True:
-        try:
-            if exit_flag:
-                os._exit(0)
-            main()
-            sleep(timer)
-        except Exception as e:
-            messagebox.showinfo("Auto Adbot", f"There was an error:\n\n{str(e)}\n\nTraceback:\n{traceback.format_exc()}")
-            os._exit(5)
+img = Image.new('RGBA', (16, 16), (0, 0, 255, 255))
+tray_icon = pystray.Icon("Auto Ad Bot", menu=pystray.Menu(item('Exit', on_exit_clicked)), icon=img)
+tray_thread = threading.Thread(target=tray_thread)
+tray_thread.start()
+tkinter_thread = threading.Thread(target=tkinter_thread)
+tkinter_thread.start()
+while True:
+    try:
+        if exit_flag:
+            os._exit(0)
+        main()
+        sleep(timer)
+    except Exception as e:
+        messagebox.showinfo("Auto Adbot", f"There was an error:\n\n{str(e)}\n\nTraceback:\n{traceback.format_exc()}")
+        os._exit(5)
